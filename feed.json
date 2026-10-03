@@ -1,0 +1,27 @@
+{
+  "profile": {
+    "publicKey": "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838",
+    "handle": "testperson3.social",
+    "repoURL": "https://github.com/gargster/testperson3-social.git",
+    "displayName": "TestPerson3",
+    "bio": "test person 3",
+    "created": "2026-10-03T09:04:32.603374Z",
+    "signature": "NnLOKusy8IgDBZwRfJgpT+FN4UkwEFW0c1/VOU5cZK6696enFR9/JrUu4+k0Ot7WLjZ163SI8EfMtoFhfR/fCQ=="
+  },
+  "profiles": {
+    "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838": "TestPerson3",
+    "ed25519:c228e14ec05bb967c8664776e46f9a22c738e924bfe5211974e7bc9f078103ba": "Canonical",
+    "ed25519:189c39f67de223e961d8fd9c075d2945b3062ab7480f33386956cd81c32ace37": "TestPerson1",
+    "ed25519:57873577004887bfa9a0b8f51b301cb6416c04808f111bae13e0e48fec11fee3": "TestPerson2"
+  },
+  "actions": [
+    {
+      "id": "post-testperson3.social-001",
+      "type": "post",
+      "author": "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838",
+      "created": "2026-10-03T09:07:21.421064Z",
+      "content": "Hello World, I AM TEST3!!!",
+      "signature": "2SrwtaMKE2LW4Wx8LH1SUGCwkW2aiyBPWTJzyjDG637efR35VYSlVovCDSh0ZUQEhT7YLlEberIHbvc0XQrNDw=="
+    }
+  ]
+}
