@@ -1,0 +1,9 @@
+{
+  "id": "boost-testperson3.social-006",
+  "type": "boost",
+  "author": "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838",
+  "created": "2026-10-26T20:18:20.289893Z",
+  "target": "post-testperson1.social-001",
+  "targetHandle": "testperson1.social",
+  "signature": "7ujvQb0sdX6UYZY1/2/EpyyWWERAeROIRh04GV+xj062i7LYARWWIdBX52fKmbyviBJng2BUT7JRM0ctk8jqBw=="
+}
