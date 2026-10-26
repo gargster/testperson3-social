@@ -79,6 +79,21 @@ function renderPost(post, indexed, profiles) {
     );
   }
 
+  const boostSummary = indexed.boostsByTarget.get(post.id);
+  if (boostSummary && boostSummary.count > 0) {
+    const boosterNames = boostSummary.boosters.map(({ author: key, count }) => {
+      const name = authorName(key, profiles);
+      return count > 1 ? `${name} (${count})` : name;
+    });
+    card.append(
+      createElement(
+        "p",
+        "post-boosts",
+        `↗ ${boostSummary.count} ${boostSummary.count === 1 ? "boost" : "boosts"} · ${boosterNames.join(", ")}`
+      )
+    );
+  }
+
   const replies = indexed.repliesByTarget.get(post.id) || [];
   if (replies.length > 0) {
     const replyList = createElement("div", "post-replies");
@@ -100,7 +115,13 @@ function renderFeed() {
   if (!currentFeed) return;
 
   postList.replaceChildren();
-  const { posts, likesByTarget, repliesByTarget, follows } = currentFeed.indexed;
+  const {
+    posts,
+    likesByTarget,
+    repliesByTarget,
+    boostsByTarget,
+    follows,
+  } = currentFeed.indexed;
   const followedKeys = new Set(
     follows
       .filter((follow) => follow.author === currentFeed.profile.publicKey)
@@ -128,7 +149,11 @@ function renderFeed() {
   feedStatus.textContent = "";
   for (const post of visiblePosts) {
     postList.append(
-      renderPost(post, { likesByTarget, repliesByTarget }, currentFeed.profiles)
+      renderPost(
+        post,
+        { likesByTarget, repliesByTarget, boostsByTarget },
+        currentFeed.profiles
+      )
     );
   }
 }
@@ -151,6 +176,7 @@ function prepareFeed(data) {
   const postsById = new Map();
   const likesByTarget = new Map();
   const repliesByTarget = new Map();
+  const boostActionsByTarget = new Map();
   const follows = [];
 
   for (const action of actions) {
@@ -160,12 +186,46 @@ function prepareFeed(data) {
       const likes = likesByTarget.get(action.target) || [];
       likes.push(action);
       likesByTarget.set(action.target, likes);
+    } else if (action.type === "boost" && typeof action.target === "string") {
+      const boosts = boostActionsByTarget.get(action.target) || [];
+      boosts.push(action);
+      boostActionsByTarget.set(action.target, boosts);
     } else if (action.type === "reply" && typeof action.inReplyTo === "string") {
       const replies = repliesByTarget.get(action.inReplyTo) || [];
       replies.push(action);
       repliesByTarget.set(action.inReplyTo, replies);
     } else if (action.type === "follow" && typeof action.target === "string") {
       follows.push(action);
+    }
+  }
+
+  const boostsByTarget = new Map();
+  const publishedBoosts = data.boostsByTarget;
+  for (const [target, summary] of Object.entries(
+    publishedBoosts && typeof publishedBoosts === "object"
+      ? publishedBoosts
+      : {}
+  )) {
+    if (
+      summary
+      && Number.isInteger(summary.count)
+      && Array.isArray(summary.boosters)
+    ) {
+      boostsByTarget.set(target, summary);
+    }
+  }
+
+  // Older feeds do not include the publisher's precomputed summary.
+  if (boostsByTarget.size === 0) {
+    for (const [target, boosts] of boostActionsByTarget) {
+      const counts = new Map();
+      for (const boost of boosts) {
+        counts.set(boost.author, (counts.get(boost.author) || 0) + 1);
+      }
+      boostsByTarget.set(target, {
+        count: boosts.length,
+        boosters: [...counts].map(([author, count]) => ({ author, count })),
+      });
     }
   }
 
@@ -176,6 +236,7 @@ function prepareFeed(data) {
       posts: [...postsById.values()],
       likesByTarget,
       repliesByTarget,
+      boostsByTarget,
       follows,
     },
   };

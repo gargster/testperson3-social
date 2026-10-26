@@ -236,10 +236,15 @@ a:focus-visible {
   font-weight: 700;
 }
 
-.post-likes {
+.post-likes,
+.post-boosts {
   margin: 0;
   color: var(--muted);
   font-size: 0.8rem;
+}
+
+.post-boosts {
+  margin-top: 0.4rem;
 }
 
 .empty-state {
