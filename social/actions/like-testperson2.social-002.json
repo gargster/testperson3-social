@@ -1,0 +1,9 @@
+{
+  "id": "like-testperson2.social-002",
+  "type": "like",
+  "author": "ed25519:57873577004887bfa9a0b8f51b301cb6416c04808f111bae13e0e48fec11fee3",
+  "created": "2026-09-30T11:14:46.011472Z",
+  "target": "post-testperson1.social-001",
+  "targetHandle": "testperson1.social",
+  "signature": "ByoY3hcT5BlSIJKL4GUwC+bWdGhyPSPQDo9+bJF3nKVPYyd/5CppvsN0dKsL9JVS6irQv5MKDrxi+UzIoDDWCA=="
+}

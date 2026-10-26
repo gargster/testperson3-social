@@ -1,0 +1,8 @@
+{
+  "id": "follow-testperson1.social-002",
+  "type": "follow",
+  "author": "ed25519:189c39f67de223e961d8fd9c075d2945b3062ab7480f33386956cd81c32ace37",
+  "created": "2026-10-03T09:09:39.409009Z",
+  "target": "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838",
+  "signature": "adanzGVHer54I6RhiceUheZtzYUam2XpyASGTCz7Oa4joiMXzwtXKObcWD1KoaCBDtG7IewG+9Wm5cgPhYqiCQ=="
+}
