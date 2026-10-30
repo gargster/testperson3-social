@@ -44,31 +44,29 @@ function renderProfile(feed) {
   }
 }
 
-function renderPost(post, indexed, profiles, options = {}) {
-  const boostContext = options.boostContext || [];
-  const boostActions = options.boostActions || [];
+function formatTime(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? value
+    : new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(date);
+}
+
+function renderPost(post, indexed, profiles, boostAction = null) {
   const card = createElement("article", "post-card");
 
-  for (const boost of boostActions) {
-    const boostTime = new Date(boost.created);
-    const timeLabel = Number.isNaN(boostTime.getTime())
-      ? boost.created
-      : new Intl.DateTimeFormat(undefined, {
-        dateStyle: "medium",
-        timeStyle: "short",
-      }).format(boostTime);
+  if (boostAction) {
     card.append(
       createElement(
         "p",
         "post-boost-context",
-        `↗ ${authorName(boost.author, profiles)} boosted · ${timeLabel}`
+        `↗ ${authorName(boostAction.author, profiles)} boosted · ${formatTime(boostAction.created)}`
       ),
-      createElement("p", "boost-action-id", `Boost action: ${boost.id}`)
+      createElement("p", "boost-action-id", `Boost action ID: ${boostAction.id}`),
+      createElement("p", "post-original-label", "Original post")
     );
-  }
-
-  if (boostContext.length > 0 || boostActions.length > 0) {
-    card.append(createElement("p", "post-original-label", "Original post"));
   }
 
   const header = createElement("header", "post-header");
@@ -78,24 +76,21 @@ function renderPost(post, indexed, profiles, options = {}) {
     authorName(post.author, profiles)
   );
   const timestamp = createElement("time", "post-time", post.created);
-  const parsedDate = new Date(post.created);
-  if (!Number.isNaN(parsedDate.getTime())) {
-    timestamp.dateTime = parsedDate.toISOString();
-    timestamp.textContent = new Intl.DateTimeFormat(undefined, {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(parsedDate);
+  const parsedPostDate = new Date(post.created);
+  if (!Number.isNaN(parsedPostDate.getTime())) {
+    timestamp.dateTime = parsedPostDate.toISOString();
+    timestamp.textContent = formatTime(post.created);
   }
   header.append(author, timestamp);
   card.append(header);
 
   card.append(createElement("p", "post-content", post.content || ""));
 
-  const likes = indexed.likesByTarget.get(post.id) || [];
+  const likes = indexed.likesByTarget.get(boostAction ? boostAction.id : post.id) || [];
   const uniqueLikerKeys = new Set(likes.map((like) => like.author));
   if (uniqueLikerKeys.size > 0) {
-    if (boostContext.length > 0) {
-      card.append(createElement("p", "post-engagement-label", "Likes on original post"));
+    if (boostAction) {
+      card.append(createElement("p", "post-engagement-label", "Likes on this Boost"));
     }
     const likerNames = [...uniqueLikerKeys].map((key) => authorName(key, profiles));
     card.append(
@@ -107,7 +102,7 @@ function renderPost(post, indexed, profiles, options = {}) {
     );
   }
 
-  const boostSummary = indexed.boostsByTarget.get(post.id);
+  const boostSummary = !boostAction && indexed.boostsByTarget.get(post.id);
   if (boostSummary && boostSummary.count > 0) {
     const boosterNames = boostSummary.boosters.map(({ author: key, count }) => {
       const name = authorName(key, profiles);
@@ -122,10 +117,10 @@ function renderPost(post, indexed, profiles, options = {}) {
     );
   }
 
-  const replies = indexed.repliesByTarget.get(post.id) || [];
+  const replies = indexed.repliesByTarget.get(boostAction ? boostAction.id : post.id) || [];
   if (replies.length > 0) {
-    if (boostContext.length > 0) {
-      card.append(createElement("p", "post-engagement-label", "Replies to original post"));
+    if (boostAction) {
+      card.append(createElement("p", "post-engagement-label", "Replies to this Boost"));
     }
     const replyList = createElement("div", "post-replies");
     for (const reply of replies) {
@@ -137,48 +132,6 @@ function renderPost(post, indexed, profiles, options = {}) {
       replyList.append(item);
     }
     card.append(replyList);
-  }
-
-  for (const boost of boostActions) {
-    const boosterName = authorName(boost.author, profiles);
-    const boostSection = createElement("section", "boost-entry");
-    boostSection.append(
-      createElement(
-        "p",
-        "boost-replies-heading",
-        `Activity on ${boosterName}'s Boost (${boost.id})`
-      )
-    );
-    const boostLikes = indexed.likesByTarget.get(boost.id) || [];
-    const uniqueBoostLikerKeys = new Set(boostLikes.map((like) => like.author));
-    if (uniqueBoostLikerKeys.size > 0) {
-      const likerNames = [...uniqueBoostLikerKeys].map((key) => authorName(key, profiles));
-      boostSection.append(
-        createElement(
-          "p",
-          "post-likes",
-          `♥ ${uniqueBoostLikerKeys.size} ${uniqueBoostLikerKeys.size === 1 ? "like" : "likes"} · ${likerNames.join(", ")}`
-        )
-      );
-    }
-
-    const boostReplies = indexed.repliesByTarget.get(boost.id) || [];
-    if (boostReplies.length > 0) {
-      const replySection = createElement("div", "boost-replies");
-      replySection.append(
-        createElement("p", "boost-replies-heading", `Replies to this Boost (${boost.id})`)
-      );
-      for (const reply of boostReplies) {
-        const item = createElement("p", "reply");
-        item.append(
-          createElement("span", "reply-author", `${authorName(reply.author, profiles)}: `),
-          document.createTextNode(reply.content || "")
-        );
-        replySection.append(item);
-      }
-      boostSection.append(replySection);
-    }
-    card.append(boostSection);
   }
 
   return card;
@@ -213,26 +166,17 @@ function renderFeed() {
     if (feedFilter.value === "following") {
       const followedBoosts = targetBoosts.filter((boost) => followedKeys.has(boost.author));
       const followsOriginalAuthor = followedKeys.has(post.author);
-      if (!followsOriginalAuthor && followedBoosts.length === 0) continue;
-
-      const timestamp = followedBoosts.length > 0
-        ? followedBoosts.reduce((latest, boost) => (
-          boost.created > latest ? boost.created : latest
-        ), post.created)
-        : post.created;
-      entries.push({
-        post,
-        timestamp,
-        boostContext: followedBoosts,
-        boostActions: followedBoosts,
-      });
+      if (followsOriginalAuthor) {
+        entries.push({ post, timestamp: post.created, boostAction: null });
+      }
+      for (const boostAction of followedBoosts) {
+        entries.push({ post, timestamp: boostAction.created, boostAction });
+      }
     } else {
-      entries.push({
-        post,
-        timestamp: post.created,
-        boostContext: [],
-        boostActions: targetBoosts,
-      });
+      entries.push({ post, timestamp: post.created, boostAction: null });
+      for (const boostAction of targetBoosts) {
+        entries.push({ post, timestamp: boostAction.created, boostAction });
+      }
     }
   }
   entries.sort((left, right) => left.timestamp.localeCompare(right.timestamp));
@@ -251,10 +195,7 @@ function renderFeed() {
         entry.post,
         { likesByTarget, repliesByTarget, boostsByTarget },
         currentFeed.profiles,
-        {
-          boostContext: entry.boostContext,
-          boostActions: entry.boostActions,
-        }
+        entry.boostAction
       )
     );
   }
