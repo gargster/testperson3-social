@@ -254,13 +254,6 @@ a:focus-visible {
   font-weight: 700;
 }
 
-.boost-action-id {
-  margin: 0 0 0.55rem;
-  color: var(--muted);
-  font-size: 0.7rem;
-  overflow-wrap: anywhere;
-}
-
 .post-original-label {
   margin: 0 0 0.25rem;
   color: var(--muted);
