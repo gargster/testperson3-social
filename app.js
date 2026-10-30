@@ -64,7 +64,6 @@ function renderPost(post, indexed, profiles, boostAction = null) {
         "post-boost-context",
         `↗ ${authorName(boostAction.author, profiles)} boosted · ${formatTime(boostAction.created)}`
       ),
-      createElement("p", "boost-action-id", `Boost action ID: ${boostAction.id}`),
       createElement("p", "post-original-label", "Original post")
     );
   }
