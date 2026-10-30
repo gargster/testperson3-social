@@ -1,0 +1,10 @@
+{
+  "id": "reply-testperson3.social-007",
+  "type": "reply",
+  "author": "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838",
+  "created": "2026-10-30T06:20:16.693069Z",
+  "content": "Replying to TestPerson2's boost",
+  "inReplyTo": "boost-testperson2.social-005",
+  "targetHandle": "testperson2.social",
+  "signature": "LnPKudJyt5lNQpKn3Yc3G0I/rNM8X9vul00h2MKtGjjb0LiKLytufGPJnPy34jOZogQ+EHA2fGz//RyccQQ+AA=="
+}
