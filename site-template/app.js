@@ -49,21 +49,10 @@ function renderPost(post, indexed, profiles, options = {}) {
   const boostActions = options.boostActions || [];
   const card = createElement("article", "post-card");
 
-  if (boostContext.length > 0) {
-    const counts = new Map();
-    for (const boost of boostContext) {
-      counts.set(boost.author, (counts.get(boost.author) || 0) + 1);
-    }
-    const names = [...counts].map(([key, count]) => {
-      const name = authorName(key, profiles);
-      return count > 1 ? `${name} (${count})` : name;
-    });
-    const latestBoost = boostContext.reduce((latest, boost) => (
-      boost.created > latest.created ? boost : latest
-    ));
-    const boostTime = new Date(latestBoost.created);
+  for (const boost of boostActions) {
+    const boostTime = new Date(boost.created);
     const timeLabel = Number.isNaN(boostTime.getTime())
-      ? latestBoost.created
+      ? boost.created
       : new Intl.DateTimeFormat(undefined, {
         dateStyle: "medium",
         timeStyle: "short",
@@ -72,9 +61,13 @@ function renderPost(post, indexed, profiles, options = {}) {
       createElement(
         "p",
         "post-boost-context",
-        `↗ ${names.join(", ")} boosted · ${timeLabel}`
-      )
+        `↗ ${authorName(boost.author, profiles)} boosted · ${timeLabel}`
+      ),
+      createElement("p", "boost-action-id", `Boost action: ${boost.id}`)
     );
+  }
+
+  if (boostContext.length > 0 || boostActions.length > 0) {
     card.append(createElement("p", "post-original-label", "Original post"));
   }
 
@@ -148,15 +141,23 @@ function renderPost(post, indexed, profiles, options = {}) {
 
   for (const boost of boostActions) {
     const boosterName = authorName(boost.author, profiles);
+    const boostSection = createElement("section", "boost-entry");
+    boostSection.append(
+      createElement(
+        "p",
+        "boost-replies-heading",
+        `Activity on ${boosterName}'s Boost (${boost.id})`
+      )
+    );
     const boostLikes = indexed.likesByTarget.get(boost.id) || [];
     const uniqueBoostLikerKeys = new Set(boostLikes.map((like) => like.author));
     if (uniqueBoostLikerKeys.size > 0) {
       const likerNames = [...uniqueBoostLikerKeys].map((key) => authorName(key, profiles));
-      card.append(
+      boostSection.append(
         createElement(
           "p",
           "post-likes",
-          `♥ ${uniqueBoostLikerKeys.size} ${uniqueBoostLikerKeys.size === 1 ? "like" : "likes"} on ${boosterName}'s boost · ${likerNames.join(", ")}`
+          `♥ ${uniqueBoostLikerKeys.size} ${uniqueBoostLikerKeys.size === 1 ? "like" : "likes"} · ${likerNames.join(", ")}`
         )
       );
     }
@@ -165,7 +166,7 @@ function renderPost(post, indexed, profiles, options = {}) {
     if (boostReplies.length > 0) {
       const replySection = createElement("div", "boost-replies");
       replySection.append(
-        createElement("p", "boost-replies-heading", `Replies to ${boosterName}'s boost`)
+        createElement("p", "boost-replies-heading", `Replies to this Boost (${boost.id})`)
       );
       for (const reply of boostReplies) {
         const item = createElement("p", "reply");
@@ -175,8 +176,9 @@ function renderPost(post, indexed, profiles, options = {}) {
         );
         replySection.append(item);
       }
-      card.append(replySection);
+      boostSection.append(replySection);
     }
+    card.append(boostSection);
   }
 
   return card;
