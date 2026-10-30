@@ -248,10 +248,17 @@ a:focus-visible {
 }
 
 .post-boost-context {
-  margin: 0 0 0.65rem;
+  margin: 0.65rem 0 0.1rem;
   color: var(--muted);
   font-size: 0.82rem;
   font-weight: 700;
+}
+
+.boost-action-id {
+  margin: 0 0 0.55rem;
+  color: var(--muted);
+  font-size: 0.7rem;
+  overflow-wrap: anywhere;
 }
 
 .post-original-label {
@@ -273,6 +280,13 @@ a:focus-visible {
   display: grid;
   gap: 0.4rem;
   margin-top: 0.75rem;
+}
+
+.boost-entry {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  border-left: 2px solid #d9dcff;
+  background: #f8f8ff;
 }
 
 .boost-replies-heading {
