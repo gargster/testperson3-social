@@ -276,26 +276,6 @@ a:focus-visible {
   font-weight: 700;
 }
 
-.boost-replies {
-  display: grid;
-  gap: 0.4rem;
-  margin-top: 0.75rem;
-}
-
-.boost-entry {
-  margin-top: 0.75rem;
-  padding: 0.65rem 0.8rem;
-  border-left: 2px solid #d9dcff;
-  background: #f8f8ff;
-}
-
-.boost-replies-heading {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
 .empty-state {
   padding: 1.3rem;
   border: 1px dashed #cbd1dc;
