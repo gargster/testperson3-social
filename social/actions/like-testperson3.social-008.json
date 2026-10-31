@@ -1,0 +1,9 @@
+{
+  "id": "like-testperson3.social-008",
+  "type": "like",
+  "author": "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838",
+  "created": "2026-10-31T01:45:52.295399Z",
+  "target": "boost-testperson2.social-005",
+  "targetHandle": "testperson2.social",
+  "signature": "17E9kqxrRfnH6ra7a8+XWMAPnpS7G+ttYih3ujZOXKU9WcFoq+WIF0byHkMxGTD3p013WTUcJJcQIJqZpgvRCQ=="
+}
