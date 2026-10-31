@@ -17,7 +17,8 @@
     "ed25519:50fcefe2b0c66b12fc627f132eb391fe2de68e508fc7b67714ad82af77fc3952": "Alice",
     "ed25519:5e7327ca95099247915583fbbb4e4bcc187089adc830d7fc5d132cff3b417a04": "Bob",
     "ed25519:10545b4c9d9e27e255ef570b3cafabc3d1ae39ece5dd72d8f75e44cc1dff453f": "Charlie",
-    "ed25519:4b24dc3d13fb8fc66b5d884993ded85752c61e4cd6a66dcab427da757e7cf877": "Check"
+    "ed25519:4b24dc3d13fb8fc66b5d884993ded85752c61e4cd6a66dcab427da757e7cf877": "Check",
+    "ed25519:71f5957a5b22a3578f241a931e0bbb86b19b43121dd817de491e8edad8d1fb59": "TestPerson5"
   },
   "actions": [
     {
@@ -79,6 +80,15 @@
       "target": "post-testperson1.social-001",
       "targetHandle": "testperson1.social",
       "signature": "ByoY3hcT5BlSIJKL4GUwC+bWdGhyPSPQDo9+bJF3nKVPYyd/5CppvsN0dKsL9JVS6irQv5MKDrxi+UzIoDDWCA=="
+    },
+    {
+      "id": "like-testperson3.social-008",
+      "type": "like",
+      "author": "ed25519:d58c64edefc76f350720d80a9db27794cd3520b90b2aed90cdb6fa1111efa838",
+      "created": "2026-10-31T01:45:52.295399Z",
+      "target": "boost-testperson2.social-005",
+      "targetHandle": "testperson2.social",
+      "signature": "17E9kqxrRfnH6ra7a8+XWMAPnpS7G+ttYih3ujZOXKU9WcFoq+WIF0byHkMxGTD3p013WTUcJJcQIJqZpgvRCQ=="
     },
     {
       "id": "post-testperson1.social-001",
